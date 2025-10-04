@@ -1,10 +1,8 @@
 // lib/app/bootstrap.dart
-
 import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../core/config/app_config.dart';
 import '../core/storage/local_storage.dart';
 import '../core/network/offline_manager.dart';
@@ -24,39 +22,94 @@ Future<void> bootstrap() async {
 
   try {
     // 1) Environment configuration (dart-define). [18]
-    AppConfig.configure(AppConfig.fromEnv()); // [18]
+    try {
+      AppConfig.configure(AppConfig.fromEnv()); // [18]
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️  AppConfig error (using defaults): $e');
+      }
+      // Use default config on web or if .env missing
+      AppConfig.configure(AppConfig(
+        env: 'production',
+        apiBaseUrl: kIsWeb ? 'http://localhost:3000' : 'http://10.0.2.2:3000',
+        analyticsEnabled: false,
+        offlineModeDefault: false,
+      ));
+    }
 
     // 2) Local storage. [19]
-    await LocalStorage.instance.init(); // [19]
+    try {
+      await LocalStorage.instance.init(); // [19]
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️  LocalStorage init error (continuing): $e');
+      }
+    }
 
     // 3) Offline manager (connectivity + manual offline toggle). [20]
-    await OfflineManager.instance.init(); // [20]
-    if (AppConfig.current.offlineModeDefault) {
-      await OfflineManager.instance.setOfflineMode(true); // [20]
+    try {
+      await OfflineManager.instance.init(); // [20]
+      if (AppConfig.current.offlineModeDefault) {
+        await OfflineManager.instance.setOfflineMode(true); // [20]
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️  OfflineManager error (continuing): $e');
+      }
     }
 
     // 4) Analytics (console in debug) with const constructors and const list literal. [1]
-    Analytics.instance.configure(
-      MultiAnalyticsBackend(
-        const [
-          ConsoleAnalyticsBackend(enabled: kDebugMode),
-        ],
-      ),
-    ); // [1]
-    Analytics.instance.setEnabled(AppConfig.current.analyticsEnabled); // [21]
-    await Analytics.instance.init(); // [21]
+    try {
+      Analytics.instance.configure(
+        MultiAnalyticsBackend(
+          const [
+            ConsoleAnalyticsBackend(enabled: kDebugMode),
+          ],
+        ),
+      ); // [1]
+      Analytics.instance.setEnabled(AppConfig.current.analyticsEnabled); // [21]
+      await Analytics.instance.init(); // [21]
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️  Analytics error (continuing): $e');
+      }
+    }
 
     // 5) Seed data warm-up. [20]
-    await SeedDataLoader.instance.loadAllSeedData(); // [20]
+    try {
+      await SeedDataLoader.instance.loadAllSeedData(); // [20]
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️  SeedDataLoader error (continuing): $e');
+      }
+    }
 
     // 6) Location service. [22]
-    await LocationService.instance.init(); // [22]
+    try {
+      await LocationService.instance.init(); // [22]
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️  LocationService error (continuing): $e');
+      }
+    }
 
     // 7) HTTP client. [23]
-    await DioClient.instance.init(); // [23]
+    try {
+      await DioClient.instance.init(); // [23]
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️  DioClient error (continuing): $e');
+      }
+    }
 
     // 8) Restore auth session. [17]
-    await container.read(authStateProvider.notifier).loadMe(); // [17]
+    try {
+      await container.read(authStateProvider.notifier).loadMe(); // [17]
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('⚠️  Auth restore error (continuing): $e');
+      }
+    }
 
     // 9) Optional health ping (log-only). [24]
     try {
@@ -73,7 +126,7 @@ Future<void> bootstrap() async {
                 : Platform.isIOS
                     ? 'iOS'
                     : Platform.operatingSystem; // [10]
-        debugPrint('⚠️ Health check failed: $e'); // [24]
+        debugPrint('⚠️  Health check failed: $e'); // [24]
         debugPrint(
           'Checklist:\n'
           '1) Backend running\n'
@@ -94,7 +147,7 @@ Future<void> bootstrap() async {
       debugPrint('❌ Bootstrap error: $e'); // [12]
       debugPrint('$st'); // [12]
     }
-    rethrow; // [7]
+    // DON'T rethrow - allow app to start in degraded mode
   } finally {
     container.dispose(); // [17]
   }
