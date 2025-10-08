@@ -6,11 +6,11 @@ import 'package:go_router/go_router.dart';
 import '../features/atlas/presentation/atlas_screen.dart';
 import '../features/home/presentation/home_screen.dart';
 import '../features/trails/presentation/trails_screen.dart';
-import '../features/trails/presentation/pages/trails_feed.dart';
-import '../features/trails/presentation/pages/trails_explore.dart';
-import '../features/trails/presentation/pages/trails_create_post.dart';
-import '../features/trails/presentation/pages/trails_activity.dart';
-import '../features/trails/presentation/pages/trails_profile.dart';
+import '../features/trails/presentation/trails_feed.dart';
+import '../features/trails/presentation/trails_explore.dart';
+import '../features/trails/presentation/trails_create_post.dart';
+import '../features/trails/presentation/trails_activity.dart';
+import '../features/trails/presentation/widgets/trail_profile.dart';
 
 import 'route_names.dart';
 
@@ -78,7 +78,7 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           name: RouteNames.trailsFeed,
           path: 'feed',
-          pageBuilder: (context, state) => _materialPage(const TrailsFeedPage(), state),
+          pageBuilder: (context, state) => _materialPage(const TrailsFeed(), state),
         ),
         GoRoute(
           name: RouteNames.trailsExplore,

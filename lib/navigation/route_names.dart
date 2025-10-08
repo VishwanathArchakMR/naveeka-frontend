@@ -12,6 +12,11 @@ class RouteNames {
   // ---------- MAIN TABS ----------
   static const String home = 'home';
   static const String trails = 'trails';
+  static const String trailsFeed = 'trails_feed';
+  static const String trailsExplore = 'trails_explore';
+  static const String trailsCreate = 'trails_create';
+  static const String trailsActivity = 'trails_activity';
+  static const String trailsProfile = 'trails_profile';
   static const String atlas = 'atlas';
   static const String journey = 'journey';
   static const String naveeAI = 'navee_ai';

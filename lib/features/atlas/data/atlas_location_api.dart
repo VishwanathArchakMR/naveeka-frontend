@@ -54,8 +54,8 @@ class AtlasLocationApi {
   /// Today returns a minimal fallback if no geocoder is injected.
   Future<GeocodeResult?> geocode(String query) async {
     if (query.trim().isEmpty) return null;
-    if (_forwardAsync != null) return _forwardAsync!(query);
-    if (_forwardSync != null) return _forwardSync!(query);
+    if (_forwardAsync != null) return _forwardAsync(query);
+    if (_forwardSync != null) return _forwardSync(query);
     // Fallback: no real geocoder wired yet.
     return null;
   }
@@ -63,8 +63,8 @@ class AtlasLocationApi {
   /// Reverse geocode coordinates to a human-readable label.
   /// Today returns a minimal fallback if no geocoder is injected.
   Future<GeocodeResult?> reverseGeocode(double latitude, double longitude) async {
-    if (_reverseAsync != null) return _reverseAsync!(latitude, longitude);
-    if (_reverseSync != null) return _reverseSync!(latitude, longitude);
+    if (_reverseAsync != null) return _reverseAsync(latitude, longitude);
+    if (_reverseSync != null) return _reverseSync(latitude, longitude);
     // Fallback: basic lat,lng label
     return GeocodeResult(
       latitude: latitude,

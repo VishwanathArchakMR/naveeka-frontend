@@ -8,10 +8,10 @@ class TrailsPostDetailScreen extends StatefulWidget {
   final Map<String, dynamic>? postData;
 
   const TrailsPostDetailScreen({
-    Key? key,
+    super.key,
     required this.postId,
     this.postData,
-  }) : super(key: key);
+  });
 
   @override
   State<TrailsPostDetailScreen> createState() => _TrailsPostDetailScreenState();

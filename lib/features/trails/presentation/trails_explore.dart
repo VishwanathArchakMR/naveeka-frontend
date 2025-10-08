@@ -71,7 +71,7 @@ class _TrailsExploreState extends State<TrailsExplore> {
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: isDark ? Colors.black45 : Colors.grey.withOpacity(0.2),
+                color: isDark ? Colors.black45 : Colors.grey.withValues(alpha: 0.2),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -173,7 +173,7 @@ class _TrailsExploreState extends State<TrailsExplore> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: isDark ? Colors.black45 : Colors.grey.withOpacity(0.2),
+              color: isDark ? Colors.black45 : Colors.grey.withValues(alpha: 0.2),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
