@@ -1,109 +1,206 @@
 // lib/navigation/app_router.dart
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/atlas/presentation/atlas_screen.dart';
+import '../features/home/presentation/home_screen.dart';
+import '../features/trails/presentation/trails_screen.dart';
+import '../features/trails/presentation/pages/trails_feed.dart';
+import '../features/trails/presentation/pages/trails_explore.dart';
+import '../features/trails/presentation/pages/trails_create_post.dart';
+import '../features/trails/presentation/pages/trails_activity.dart';
+import '../features/trails/presentation/pages/trails_profile.dart';
+
 import 'route_names.dart';
 
-/// Global navigator key (root) for programmatic navigation and dialogs. [go_router]
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
-/// The shared GoRouter instance used by the app. [1]
+Page<dynamic> _materialPage(Widget child, GoRouterState state) =>
+    MaterialPage<void>(key: state.pageKey, child: child);
+
 final GoRouter appRouter = GoRouter(
   navigatorKey: rootNavigatorKey,
   initialLocation: RoutePaths.splash,
-  debugLogDiagnostics: false,
+  debugLogDiagnostics: !kReleaseMode,
   routes: <RouteBase>[
-    // Splash (placeholder until screen wired)
     GoRoute(
       name: RouteNames.splash,
       path: RoutePaths.splash,
-      builder: (context, state) => const _SplashPlaceholder(),
+      pageBuilder: (context, state) => _materialPage(
+        const _SplashPlaceholder(),
+        state,
+      ),
     ),
-
-    // Home (placeholder until screen wired)
     GoRoute(
       name: RouteNames.home,
       path: RoutePaths.home,
-      builder: (context, state) => const _HomePlaceholder(),
+      pageBuilder: (context, state) => _materialPage(
+        const HomeScreen(),
+        state,
+      ),
     ),
-
-    // Atlas (wired to real screen)
     GoRoute(
       name: RouteNames.atlas,
       path: RoutePaths.atlas,
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final qp = state.uri.queryParameters;
-
-        // Query parsing aligned with AtlasScreen signature
         final initialQuery = qp['q'];
         final region = qp['region'];
         final nearby = _parseBool(qp['nearby']);
         final trending = _parseBool(qp['trending']);
-
-        return AtlasScreen(
-          initialQuery: initialQuery,
-          region: region,
-          nearby: nearby,
-          trending: trending,
+        return _materialPage(
+          AtlasScreen(
+            initialQuery: initialQuery,
+            region: region,
+            nearby: nearby,
+            trending: trending,
+          ),
+          state,
         );
       },
     ),
-
-    // Place detail (placeholder for now; respects :id path) [1]
     GoRoute(
       name: RouteNames.placeDetail,
       path: '${RoutePaths.placeDetail}/:${RouteParams.id}',
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final id = state.pathParameters[RouteParams.id] ?? '';
-        return _PlaceDetailPlaceholder(placeId: id);
+        return _materialPage(_PlaceDetailPlaceholder(placeId: id), state);
       },
     ),
 
-    // Trails (placeholder)
+    // Trails main route wired to real screen with nested subroutes
     GoRoute(
       name: RouteNames.trails,
       path: RoutePaths.trails,
-      builder: (context, state) => const _SimplePlaceholder(title: 'Trails'),
+      pageBuilder: (context, state) => _materialPage(const TrailsScreen(), state),
+      routes: [
+        GoRoute(
+          name: RouteNames.trailsFeed,
+          path: 'feed',
+          pageBuilder: (context, state) => _materialPage(const TrailsFeedPage(), state),
+        ),
+        GoRoute(
+          name: RouteNames.trailsExplore,
+          path: 'explore',
+          pageBuilder: (context, state) => _materialPage(const TrailsExplorePage(), state),
+        ),
+        GoRoute(
+          name: RouteNames.trailsCreate,
+          path: 'create',
+          pageBuilder: (context, state) => _materialPage(const TrailsCreatePostPage(), state),
+        ),
+        GoRoute(
+          name: RouteNames.trailsActivity,
+          path: 'activity',
+          pageBuilder: (context, state) => _materialPage(const TrailsActivityPage(), state),
+        ),
+        GoRoute(
+          name: RouteNames.trailsProfile,
+          path: 'profile',
+          pageBuilder: (context, state) => _materialPage(const TrailsProfilePage(), state),
+        ),
+      ],
     ),
 
-    // Journey (placeholder)
+    // Register missing quick action routes
+    GoRoute(
+      name: RouteNames.booking,
+      path: RoutePaths.booking,
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Booking'),
+        state,
+      ),
+    ),
+    GoRoute(
+      name: RouteNames.history,
+      path: RoutePaths.history,
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'History'),
+        state,
+      ),
+    ),
+    GoRoute(
+      name: RouteNames.favorites,
+      path: RoutePaths.favorites,
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Favorites'),
+        state,
+      ),
+    ),
+    GoRoute(
+      name: RouteNames.following,
+      path: RoutePaths.following,
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Following'),
+        state,
+      ),
+    ),
+    GoRoute(
+      name: RouteNames.planning,
+      path: RoutePaths.planning,
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Planning'),
+        state,
+      ),
+    ),
+    GoRoute(
+      name: RouteNames.messages,
+      path: RoutePaths.messages,
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Messages'),
+        state,
+      ),
+    ),
+
     GoRoute(
       name: RouteNames.journey,
       path: RoutePaths.journey,
-      builder: (context, state) => const _SimplePlaceholder(title: 'Journey'),
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Journey'),
+        state,
+      ),
     ),
-
-    // Navee AI (placeholder)
     GoRoute(
       name: RouteNames.naveeAI,
       path: RoutePaths.naveeAI,
-      builder: (context, state) => const _SimplePlaceholder(title: 'Navee AI'),
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Navee AI'),
+        state,
+      ),
     ),
-
-    // Settings (placeholder)
     GoRoute(
       name: RouteNames.settings,
       path: RoutePaths.settings,
-      builder: (context, state) => const _SimplePlaceholder(title: 'Settings'),
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Settings'),
+        state,
+      ),
     ),
-
-    // Profile (placeholder)
     GoRoute(
       name: RouteNames.profile,
       path: RoutePaths.profile,
-      builder: (context, state) => const _SimplePlaceholder(title: 'Profile'),
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Profile'),
+        state,
+      ),
     ),
-
-    // Checkout (placeholder)
     GoRoute(
       name: RouteNames.checkout,
       path: RoutePaths.checkout,
-      builder: (context, state) => const _SimplePlaceholder(title: 'Checkout'),
+      pageBuilder: (context, state) => _materialPage(
+        const _SimplePlaceholder(title: 'Checkout'),
+        state,
+      ),
     ),
   ],
-  errorBuilder: (context, state) => _RouterErrorScreen(error: state.error),
+  errorPageBuilder: (context, state) => _materialPage(
+    _RouterErrorScreen(error: state.error),
+    state,
+  ),
+  redirect: (context, state) {
+    return null;
+  },
 );
 
 bool? _parseBool(String? v) {
@@ -112,11 +209,8 @@ bool? _parseBool(String? v) {
   return s == '1' || s == 'true' || s == 'yes';
 }
 
-/// ------------ Placeholders (safe, const, removable later) ------------
-
 class _SplashPlaceholder extends StatelessWidget {
   const _SplashPlaceholder();
-
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
@@ -127,23 +221,9 @@ class _SplashPlaceholder extends StatelessWidget {
   }
 }
 
-class _HomePlaceholder extends StatelessWidget {
-  const _HomePlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text('Home'),
-      ),
-    );
-  }
-}
-
 class _PlaceDetailPlaceholder extends StatelessWidget {
   final String placeId;
   const _PlaceDetailPlaceholder({required this.placeId});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,7 +238,6 @@ class _PlaceDetailPlaceholder extends StatelessWidget {
 class _SimplePlaceholder extends StatelessWidget {
   final String title;
   const _SimplePlaceholder({required this.title});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -171,7 +250,6 @@ class _SimplePlaceholder extends StatelessWidget {
 class _RouterErrorScreen extends StatelessWidget {
   final Exception? error;
   const _RouterErrorScreen({this.error});
-
   @override
   Widget build(BuildContext context) {
     final message = error?.toString() ?? 'Unknown route error';
