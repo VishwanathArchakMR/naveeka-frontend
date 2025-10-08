@@ -223,39 +223,39 @@ class NotificationService {
 
   Future<void> initPush({Future<void> Function(AppNotification message)? backgroundHandler}) async {
     if (_push == null) return;
-    await _push!.initialize(backgroundHandler: backgroundHandler);
+    await _push.initialize(backgroundHandler: backgroundHandler);
   }
 
   Future<NotificationPermissionStatus> checkPushPermission() async {
     if (_push == null) return NotificationPermissionStatus.unknown;
-    return _push!.checkPermission();
+    return _push.checkPermission();
   }
 
   Future<NotificationPermissionStatus> requestPushPermission({bool provisional = false}) async {
     if (_push == null) return NotificationPermissionStatus.unknown;
-    return _push!.requestPermission(provisional: provisional);
+    return _push.requestPermission(provisional: provisional);
   }
 
   Future<String?> getPushToken() async {
     if (_push == null) return null;
-    return _push!.getToken();
+    return _push.getToken();
   }
 
   Stream<String> get onPushTokenRefresh => _push?.onTokenRefresh ?? const Stream.empty();
 
   Future<void> deletePushToken() async {
     if (_push == null) return;
-    await _push!.deleteToken();
+    await _push.deleteToken();
   }
 
   Future<void> subscribeTopic(String topic) async {
     if (_push == null) return;
-    await _push!.subscribeTopic(topic);
+    await _push.subscribeTopic(topic);
   }
 
   Future<void> unsubscribeTopic(String topic) async {
     if (_push == null) return;
-    await _push!.unsubscribeTopic(topic);
+    await _push.unsubscribeTopic(topic);
   }
 
   Stream<AppNotification> get onForegroundMessage => _push?.onMessage ?? const Stream.empty();
@@ -269,7 +269,7 @@ class NotificationService {
     Future<void> Function(AppNotification message)? onSelectNotification,
   }) async {
     if (_local == null) return;
-    await _local!.initialize(androidChannels: androidChannels, onSelectNotification: onSelectNotification);
+    await _local.initialize(androidChannels: androidChannels, onSelectNotification: onSelectNotification);
   }
 
   Future<void> showLocalNow({
@@ -278,7 +278,7 @@ class NotificationService {
     String? androidChannelId,
   }) async {
     if (_local == null) return;
-    await _local!.showNow(id: id, message: message, androidChannelId: androidChannelId ?? message.channelId);
+    await _local.showNow(id: id, message: message, androidChannelId: androidChannelId ?? message.channelId);
   }
 
   Future<void> scheduleLocalAt({
@@ -290,7 +290,7 @@ class NotificationService {
     String? timeZone,
   }) async {
     if (_local == null) return;
-    await _local!.scheduleAt(
+    await _local.scheduleAt(
       id: id,
       message: message,
       when: when,
@@ -302,12 +302,12 @@ class NotificationService {
 
   Future<void> cancelLocal(int id) async {
     if (_local == null) return;
-    await _local!.cancel(id);
+    await _local.cancel(id);
   }
 
   Future<void> cancelAllLocal() async {
     if (_local == null) return;
-    await _local!.cancelAll();
+    await _local.cancelAll();
   }
 }
 
