@@ -11,6 +11,7 @@ import '../features/trails/presentation/trails_explore.dart';
 import '../features/trails/presentation/trails_create_post.dart';
 import '../features/trails/presentation/trails_activity.dart';
 import '../features/trails/presentation/widgets/trail_profile.dart';
+import '../features/trails/data/trail_location_api.dart';
 
 import 'route_names.dart';
 
@@ -83,12 +84,12 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           name: RouteNames.trailsExplore,
           path: 'explore',
-          pageBuilder: (context, state) => _materialPage(const TrailsExplorePage(), state),
+          pageBuilder: (context, state) => _materialPage(const TrailsExplore(), state),
         ),
         GoRoute(
           name: RouteNames.trailsCreate,
           path: 'create',
-          pageBuilder: (context, state) => _materialPage(const TrailsCreatePostPage(), state),
+          pageBuilder: (context, state) => _materialPage(const TrailsCreatePost(), state),
         ),
         GoRoute(
           name: RouteNames.trailsActivity,
@@ -98,7 +99,19 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           name: RouteNames.trailsProfile,
           path: 'profile',
-          pageBuilder: (context, state) => _materialPage(const TrailsProfilePage(), state),
+          pageBuilder: (context, state) => _materialPage(
+            const TrailProfile(
+              detail: TrailDetail(
+                summary: TrailSummary(
+                  id: 'placeholder',
+                  name: 'Placeholder Trail',
+                  center: GeoPoint(0.0, 0.0),
+                ),
+                description: 'This is a placeholder trail',
+              ),
+            ),
+            state,
+          ),
         ),
       ],
     ),

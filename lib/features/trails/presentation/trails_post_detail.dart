@@ -109,7 +109,7 @@ class _TrailsPostDetailScreenState extends State<TrailsPostDetailScreen> with Si
                         decoration: BoxDecoration(
                           image: DecorationImage(
                             image: NetworkImage(
-                              'https://source.unsplash.com/800x800/?travel,${widget.postId}${index}',
+                              'https://source.unsplash.com/800x800/?travel,${widget.postId}$index',
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -307,7 +307,7 @@ class _TrailsPostDetailScreenState extends State<TrailsPostDetailScreen> with Si
       child: SafeArea(
         child: Row(
           children: [
-            CircleAvatar(
+            const CircleAvatar(
               radius: 16,
               backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=50'),
             ),

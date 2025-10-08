@@ -29,11 +29,17 @@ Future<void> bootstrap() async {
         debugPrint('⚠️  AppConfig error (using defaults): $e');
       }
       // Use default config on web or if .env missing
-      AppConfig.configure(AppConfig(
-        env: 'production',
-        apiBaseUrl: kIsWeb ? 'http://localhost:3000' : 'http://10.0.2.2:3000',
+      AppConfig.configure(const AppConfig(
+        env: AppEnv.prod,
+        apiBaseUrl: 'http://localhost:3000',
+        cdnBaseUrl: 'http://localhost:3000',
         analyticsEnabled: false,
+        crashReportingEnabled: false,
         offlineModeDefault: false,
+        mapsApiKey: '',
+        sentryDsn: '',
+        appVersion: '0.0.1',
+        buildNumber: '1',
       ));
     }
 

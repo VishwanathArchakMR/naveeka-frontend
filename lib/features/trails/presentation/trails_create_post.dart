@@ -190,7 +190,7 @@ class _TrailsCreatePostState extends State<TrailsCreatePost> with TickerProvider
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: isDark ? Colors.black45 : Colors.grey.withOpacity(0.1),
+            color: isDark ? Colors.black45 : Colors.grey.withValues(alpha: 0.1),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -264,7 +264,7 @@ class _TrailsCreatePostState extends State<TrailsCreatePost> with TickerProvider
               borderRadius: BorderRadius.circular(12),
               boxShadow: [
                 BoxShadow(
-                  color: isDark ? Colors.black45 : Colors.grey.withOpacity(0.1),
+                  color: isDark ? Colors.black45 : Colors.grey.withValues(alpha: 0.1),
                   blurRadius: 5,
                   offset: const Offset(0, 2),
                 ),
