@@ -5,6 +5,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'app/app.dart';
 import 'app/bootstrap.dart';
@@ -32,6 +33,15 @@ Future<void> main() async {
     () async {
       WidgetsFlutterBinding.ensureInitialized();
 
+      // Use path strategy for clean URLs on web
+      if (kIsWeb) {
+        usePathUrlStrategy();
+      }
+
+      // Web renderer hint via meta/environment (set at build time)
+      // This app supports auto; override with --web-renderer html/canvaskit if needed
+
+      // Robust global error handling
       final prevFlutterOnError = FlutterError.onError;
       FlutterError.onError = (FlutterErrorDetails details) {
         Zone.current.handleUncaughtError(
@@ -40,7 +50,6 @@ Future<void> main() async {
         );
         prevFlutterOnError?.call(details);
       };
-
       final prevPlatformOnError = PlatformDispatcher.instance.onError;
       PlatformDispatcher.instance.onError = (Object error, StackTrace stack) {
         Zone.current.handleUncaughtError(error, stack);
@@ -71,10 +80,10 @@ Future<void> main() async {
         );
       };
 
-      // 1) Splash immediately
+      // 1) Show a lightweight splash immediately (helps web perceived performance)
       runApp(const _SplashApp());
 
-      // 2) Bootstrap, then run with DI providers available
+      // 2) Bootstrap dependencies, then run the main app with ProviderScope
       unawaited(
         Future<void>(() async {
           try {
@@ -99,7 +108,6 @@ Future<void> main() async {
 
 class _SplashApp extends StatelessWidget {
   const _SplashApp();
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -117,7 +125,6 @@ class _SplashApp extends StatelessWidget {
 
 class _SplashScreen extends StatelessWidget {
   const _SplashScreen();
-
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -149,4 +156,4 @@ class _SplashScreen extends StatelessWidget {
 }
 
 // Small helper to silence unawaited futures without importing a package.
-void unawaited(Future<void> f) {}
+void unawaited(Future f) {}
